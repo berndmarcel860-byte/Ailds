@@ -62,8 +62,8 @@ TTS_SENTENCE_PAUSE = float(os.getenv("TTS_SENTENCE_PAUSE", "0.25"))
 MAX_RECORDING_DURATION = int(os.getenv("MAX_RECORDING_DURATION", "12"))
 MAX_SILENCE_SEC = int(os.getenv("MAX_SILENCE_SEC", "2"))
 
-BREATH_WAV = os.getenv("BREATH_WAV", "")
-BREATH_ENABLED = os.path.exists(BREATH_WAV)
+# BREATH_WAV removed - SSML breaks not used
+# BREATH_ENABLED removed - natural pauses via programmatic delays
 
 # ============================================================
 # 🧠 Whisper (GPU)
@@ -162,8 +162,9 @@ def speak_streamed(ch, text, cid=None):
             if stop.is_set(): break
             media = tts_to_media(s)
             q.put(("s", s, media))
-            if BREATH_ENABLED and random.random() < 0.4:
-                q.put(("b", None, f"sound:aiagent/{Path(BREATH_WAV).stem}"))
+            # if BREATH_ENABLED and random.random() < 0.4:  # Breath feature removed
+            # Natural pauses now handled via delays between sentences
+                # q.put(("b", None, f"sound:aiagent/{Path(BREATH_WAV).stem}"))  # Removed
 
     threading.Thread(target=prepare, daemon=True).start()
 
@@ -194,10 +195,11 @@ def speak_streamed(ch, text, cid=None):
 def greeting():
     if ROLE == "recover":
         return (
-            "Guten Tag, mein Name ist Alex von Krypto X Pay. "
-            "Wir sind ein von der FCA lizenziertes Unternehmen, das Menschen hilft, "
-            "die auf betrügerischen Online-Plattformen Geld verloren haben. "
-            "Darf ich Ihnen kurz erklären, wie wir helfen können?"
+            "Hallo, mein Name ist Alex. Ich bin ein virtueller Agent basierend auf künstlicher Intelligenz "
+            "von KryptoXPay, einem von der FCA lizenzierten Unternehmen, das Menschen hilft, "
+            "die bei Betrugsplattformen Geld verloren haben. "
+            "Darf ich Sie fragen: Haben Sie auch in der Vergangenheit Geld bei betrügerischen "
+            "Investitionsplattformen verloren, wie zum Beispiel Forex, Krypto, Dating, Lotto oder Casinos?"
         )
     else:
         return (
