@@ -32,14 +32,20 @@ ASTERISK_SOUNDS_DIR = Path(os.getenv("ASTERISK_SOUNDS_DIR", "/var/lib/asterisk/s
 SOUNDS_MAIN = ASTERISK_SOUNDS_DIR / "aiagent"
 SOUNDS_MAIN.mkdir(parents=True, exist_ok=True)
 
-BREATH_WAV = Path(os.getenv("BREATH_WAV", "/var/lib/asterisk/sounds/aiagent/breath1.wav"))
 REFERENCE_WAV = os.getenv("REFERENCE_WAV", "/var/lib/asterisk/sounds/aiagent/de_f_short.wav")
+# SSML breaks and breath features removed for more natural, professional speech
+# Natural pauses are now handled with programmatic delays between TTS requests
 
 # ============================================================
 # 🔧 Modelle
 # ============================================================
-TTS_ENGINE = os.getenv("TTS_ENGINE", "xttsv2").lower()
+TTS_VOICE = os.getenv("TTS_VOICE", "thorsten")  # thorsten | xttsv2
+TTS_ENGINE = TTS_VOICE  # Backward compatibility.lower()
 LANG = os.getenv("LANGUAGE", "de")
+
+# Speech quality parameters for human-realistic output
+TTS_RATE = float(os.getenv("TTS_RATE", "0.98"))  # Conservative speech rate
+TTS_PITCH = float(os.getenv("TTS_PITCH", "0.95"))  # Slight pitch downshift
 
 MODEL_THORSTEN = os.getenv("COQUI_MODEL_THORSTEN", "tts_models/de/thorsten/vits-neon")
 MODEL_XTTSV2 = os.getenv("COQUI_MODEL_XTTSV2", "tts_models/multilingual/multi-dataset/xtts_v2")
@@ -153,7 +159,7 @@ def generate_tts(sentence: str) -> Path | None:
         else:
             tts_model.tts_to_file(text=sentence, file_path=str(raw))
         convert_to_asterisk(raw, path)
-        add_breath_after(path)
+        # add_breath_after(path)  # SSML breaks removed
     except Exception as e:
         print(f"❌ Fehler bei Satz-TTS: {e}")
         return None
