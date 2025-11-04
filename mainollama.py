@@ -195,10 +195,11 @@ def speak_streamed(ch, text, cid=None):
 def greeting():
     if ROLE == "recover":
         return (
-            "Guten Tag, mein Name ist Alex von Krypto X Pay. "
-            "Wir sind ein von der FCA lizenziertes Unternehmen, das Menschen hilft, "
-            "die auf betrügerischen Online-Plattformen Geld verloren haben. "
-            "Darf ich Ihnen kurz erklären, wie wir helfen können?"
+            "Hallo, mein Name ist Alex. Ich bin ein virtueller Agent basierend auf künstlicher Intelligenz "
+            "von KryptoXPay, einem von der FCA lizenzierten Unternehmen, das Menschen hilft, "
+            "die bei Betrugsplattformen Geld verloren haben. "
+            "Darf ich Sie fragen: Haben Sie auch in der Vergangenheit Geld bei betrügerischen "
+            "Investitionsplattformen verloren, wie zum Beispiel Forex, Krypto, Dating, Lotto oder Casinos?"
         )
     else:
         return (
