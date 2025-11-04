@@ -87,7 +87,14 @@ try:
         print("🔥 Thorsten Warmup abgeschlossen.")
     print("✅ TTS Modell erfolgreich geladen.")
 except Exception as e:
-    print(f"❌ Fehler beim Laden des Modells ({TTS_ENGINE}): {e}")
+    print(f"❌ KRITISCHER FEHLER beim Laden des Modells ({TTS_ENGINE}): {e}")
+    print(f"⚠️  TTS-Engine kann nicht verwendet werden. Bitte überprüfen Sie:")
+    print(f"    1. Ist das Modell '{MODEL_THORSTEN if TTS_ENGINE != 'xttsv2' else MODEL_XTTSV2}' installiert?")
+    print(f"    2. Sind alle Abhängigkeiten korrekt installiert?")
+    print(f"    3. GPU-Verfügbarkeit: {use_gpu}")
+    import traceback
+    traceback.print_exc()
+    # Keep tts_model as None - calls will fail gracefully
 
 # ============================================================
 # 🧹 Hilfsfunktionen
@@ -143,6 +150,11 @@ def add_breath_after(path: Path):
 # 🎧 Hauptgenerierung
 # ============================================================
 def generate_tts(sentence: str) -> Path | None:
+    # Check if TTS model is loaded
+    if tts_model is None:
+        print(f"❌ TTS Modell nicht geladen - kann keine Sprache generieren")
+        return None
+    
     sentence = sanitize_text(sentence)
     path = wav_path(sentence)
     if path.exists():
@@ -157,6 +169,7 @@ def generate_tts(sentence: str) -> Path | None:
                 language=LANG
             )
         else:
+            # Thorsten voice - professional German TTS
             tts_model.tts_to_file(text=sentence, file_path=str(raw))
         convert_to_asterisk(raw, path)
         # add_breath_after(path)  # SSML breaks removed
